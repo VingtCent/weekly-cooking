@@ -1,4 +1,5 @@
 export interface Recipy {
+    id: number,
     name: string
 }
 
@@ -9,9 +10,11 @@ interface IRecipyRepository {
 export class RecipyRepository implements IRecipyRepository {
     public get(): Recipy[] {
         return [{
-            name: 'Paëlla'
+            id: 1,
+            name: 'Paëlla',
         },
         {
+            id: 2,
             name: 'Pizza'
         }]
     }
