@@ -5,31 +5,27 @@ export interface WeekMenu {
 export interface WeekRecipies {
     recipyId: number,
     recipyName: string,
-    meals: DayMeal[]
-}
-
-export interface DayMeal {
-    day: number,
-    meal: Meal
-}
-
-export enum Meal {
-    Lunch,
-    Dinner
+    portions: number
 }
 
 interface IWeekMenuRepository {
     get(): WeekMenu;
 }
 
-export class WeekMenuRepository implements IWeekMenuRepository {
+const weekMenu: WeekMenu = {
+    recipies: [{
+        recipyId: 1,
+        recipyName: "Paëlla",
+        portions: 2
+    }]
+}
+
+class WeekMenuRepository implements IWeekMenuRepository {
     public get(): WeekMenu {
-        return {
-            recipies: [{
-                recipyId: 1,
-                recipyName: "Paëlla",
-                meals: [{ day: 1, meal: Meal.Dinner }, { day: 3, meal: Meal.Dinner }]
-            }]
-        }
+        return weekMenu;
     }
 }
+
+const weekMenuRepository = new WeekMenuRepository();
+
+export default weekMenuRepository;

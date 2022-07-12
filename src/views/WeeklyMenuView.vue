@@ -5,46 +5,52 @@
             <v-card-title>Ajouter une recette</v-card-title>
         </v-card-item>
         <v-card-text class="py-0">
-            <v-autocomplete v-model="selectedRecipy" :items="recipies" item-title="name" item-value="id" hide-details>
-            </v-autocomplete>
-            <day-meals-component />
-            <v-btn @click="add" icon="mdi-plus-circle" color="primary"></v-btn>
+            <v-autocomplete v-model="recipy" :items="recipies" item-title="name" item-value="id" hide-details>
+            </v-autocomplete>            
         </v-card-text>
+        <v-card-actions>
+            <v-text-field label="Portions" type="number" v-model="portions"></v-text-field>
+            <v-btn @click="add" icon="mdi-plus-circle" color="primary"></v-btn>
+        </v-card-actions>
     </v-card>
-    <v-list :items="weekMenu.recipies" item-title="recipyName">
+    <v-list :items="weekMenu.recipies">
+        <v-list-item v-for="recipy in weekMenu.recipies">{{recipy.recipyName}} {{recipy.portions}}</v-list-item>
     </v-list>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { RecipyRepository } from "../repositories/recipyRepository";
-import { Meal, WeekMenuRepository } from "../repositories/weekMenuRepository";
+import recipyRepository from "../repositories/recipyRepository";
+import weekMenuRepository from "../repositories/weekMenuRepository";
 import type { Recipy } from "../repositories/recipyRepository";
 import type { WeekMenu } from "../repositories/weekMenuRepository";
-import DayMealsComponent from "../components/DayMealsComponent.vue";
 
 export default defineComponent({
     name: "RecipiesView",
     data: () => ({
-        selectedRecipy: "" as string,
+        recipy: "" as string,
+        portions: undefined as number | undefined,
         recipies: [] as Recipy[],
-        weekMenu: {} as WeekMenu,
-        days: [1, 2, 3, 4, 5, 6, 7]
+        weekMenu: {} as WeekMenu
     }),
+    watch:{
+        recipy(newValue, oldValue){
+            this.portions = this.recipies.find(p => p.id == +newValue)?.portions
+        }
+    },
     methods: {
         add() {
-            var addedRecipy = this.recipies.filter(r => r.id == +this.selectedRecipy)[0];
+            var addedRecipy = this.recipies.filter(r => r.id == +this.recipy)[0];
             this.weekMenu.recipies.push({
                 recipyId: addedRecipy.id,
                 recipyName: addedRecipy.name,
-                meals: [{ day: 1, meal: Meal.Dinner }, { day: 3, meal: Meal.Dinner }]
+                portions: addedRecipy.portions
             });
         }
     },
     mounted() {
-        this.recipies = new RecipyRepository().get();
-        this.weekMenu = new WeekMenuRepository().get();
-    },
-    components: { DayMealsComponent }
+        this.recipies = recipyRepository.get();
+        this.weekMenu = weekMenuRepository.get();
+    }
 })
 </script>
