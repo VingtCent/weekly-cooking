@@ -14,3 +14,12 @@ npm run dev
 ```sh
 npm run build
 ```
+## Doker
+### Build
+```sh
+docker build -t weekly-cooking .
+```
+### Run
+```sh
+docker run -it -p 8080:80 --rm --name weekly-cooking weekly-cooking
+```
