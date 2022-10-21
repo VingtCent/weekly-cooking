@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t weekly-cooking .'
+                echo 'I built a container'
             }
         }
         // stage('Deploy') {
