@@ -1,9 +1,14 @@
 pipeline {
     agent any
     stages {
-        stage('Stage 1') {
+        stage('Build') {
             steps {
-                echo 'Hello world'
+                sh 'docker build -t weekly-cooking .'
+            }
+        }
+        stage('Deploy') {
+            steps{
+                sh 'docker run -it -p 42000:80 --rm --name weekly-cooking weekly-cooking'
             }
         }
     }
