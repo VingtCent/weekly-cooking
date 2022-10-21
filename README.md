@@ -21,5 +21,5 @@ docker build -t weekly-cooking .
 ```
 ### Run
 ```sh
-docker run -it -p 8080:80 --rm --name weekly-cooking weekly-cooking
+docker run -it -p 42000:80 --rm --name weekly-cooking weekly-cooking
 ```
