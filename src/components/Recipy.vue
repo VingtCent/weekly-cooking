@@ -14,7 +14,7 @@
         </v-layout>
     </v-dialog>
 
-    <v-card>
+    <v-card @click="edit">
         <v-card-title>
             {{ recipy.name }}
         </v-card-title>
@@ -26,8 +26,6 @@
         </v-card-text>
         <v-card-actions>
             <v-btn v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url"></v-btn>
-            <v-btn icon="mdi-pencil" @click="edit" />
-            <v-btn icon="mdi-delete" />
         </v-card-actions>
     </v-card>
 </template>
