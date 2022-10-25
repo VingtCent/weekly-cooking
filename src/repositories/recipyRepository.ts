@@ -9,7 +9,7 @@ export interface Recipy {
 export interface Ingredient {
     name: string,
     quantity: number,
-    unit: string
+    unit?: string
 }
 
 interface IRecipyRepository {
@@ -28,7 +28,7 @@ class RecipyRepository implements IRecipyRepository {
             id: 2,
             name: 'Pizza',
             portions: 3,
-            ingredients: [{ name: 'pate pizza', quantity: 1, unit: '' }]
+            ingredients: [{ name: 'pate pizza', quantity: 1 }]
         },
         {
             id: 3,
@@ -41,7 +41,7 @@ class RecipyRepository implements IRecipyRepository {
             name: 'Poireaux vinaigrettes',
             url: 'https://cuisine.voozenoo.fr/2022/10/20/poireaux-vinaigrette/?utm_source=rss&utm_medium=rss&utm_campaign=poireaux-vinaigrette',
             portions: 3,
-            ingredients: []
+            ingredients: [{name: 'Poireaux', quantity:6}, {name: 'Vinaigrette', quantity:50, unit:'ml'}]
         },
         {
             id: 5,
