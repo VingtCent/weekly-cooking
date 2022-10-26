@@ -13,11 +13,11 @@ export interface Ingredient {
 }
 
 interface IRecipyRepository {
-    get(): Recipy[];
+    getAll(callback: (a: Recipy[]) => void): void;
 }
 
 class RecipyRepository implements IRecipyRepository {
-    db!: IDBDatabase | undefined;
+
     recipies: Recipy[] = [{
         id: 1,
         name: 'Paëlla',
@@ -79,35 +79,43 @@ class RecipyRepository implements IRecipyRepository {
         portions: 3,
         ingredients: []
     }]
+    
     /**
      *
      */
     constructor() {
-        const dbOpenRequest = indexedDB.open("weekly-cooking");
+        const dbOpenRequest = indexedDB.open("weekly-cooking", 2);
+
         dbOpenRequest.onsuccess = () => {
             console.log("Local database opened")
-            this.db = dbOpenRequest.result;
         };
+
         dbOpenRequest.onerror = () => {
             console.log("failure while opening database: " + dbOpenRequest.error?.message)
-        }
+        };
+
         dbOpenRequest.onupgradeneeded = () => {
             console.log("New database");
-            if (this.db != undefined) {
-                const objectStore = this.db.createObjectStore('recipies', { keyPath: "id" });
-                objectStore.transaction.oncomplete = () => {
-                    const recipiesObjectStore = this.db?.transaction('recipies', 'readwrite').objectStore('recipies');
-                    this.recipies.forEach(r => recipiesObjectStore?.add(r))
-                }
-            }
-            else{
-                console.log("unable to update database");
+            const db = dbOpenRequest.result;
+            const objectStore = db.createObjectStore('recipies', { keyPath: "id" });
+            objectStore.createIndex('by_name', 'name', { unique: false })
+            objectStore.transaction.oncomplete = () => {
+                console.log("Fill database");
+                const recipiesObjectStore = db.transaction('recipies', 'readwrite').objectStore('recipies');
+                this.recipies.forEach(r => recipiesObjectStore?.add(r))
             }
         };
     }
 
-    public get(): Recipy[] {
-        return this.recipies;
+    public getAll(callback: (a: Recipy[]) => void): void {
+        const dbOpenRequest = indexedDB.open('weekly-cooking', 2);
+        dbOpenRequest.onsuccess = () =>{
+            const request = dbOpenRequest.result.transaction('recipies', 'readonly').objectStore('recipies').getAll();
+            request.onsuccess = ev => {
+                console.log('get all succeed: ' + request.result)
+                callback(request.result);
+            }
+        }
     }
 }
 

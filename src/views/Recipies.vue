@@ -1,7 +1,7 @@
 <template>
     <v-text-field label="Rechercher" prepend-inner-icon="mdi-magnify" v-model="search"></v-text-field>
     <v-container class="d-flex flex-row flex-wrap">
-        <MyRecipy v-bind:recipy="item" v-for="item in getRecipies()"></MyRecipy>
+        <MyRecipy v-for="item in getRecipies()" v-bind:recipy="item" :key="item.id"></MyRecipy>
     </v-container>
 </template>
 <script lang="ts">
@@ -29,7 +29,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        this.recipies = recipyRepository.get();
+        recipyRepository.getAll((result) => this.recipies = result);
     }
 })
 </script>
