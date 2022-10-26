@@ -1,10 +1,7 @@
-<template>    
-    <v-container>
-        <v-row>            
-            <v-col v-for="item in recipies" cols="2">
-                <MyRecipy v-bind:recipy="item"></MyRecipy>
-            </v-col>
-        </v-row>
+<template>
+    <v-text-field label="Rechercher" prepend-inner-icon="mdi-magnify" v-model="search"></v-text-field>
+    <v-container class="d-flex flex-row flex-wrap">
+        <MyRecipy v-bind:recipy="item" v-for="item in getRecipies()"></MyRecipy>
     </v-container>
 </template>
 <script lang="ts">
@@ -15,16 +12,20 @@ import type { Recipy } from "../repositories/recipyRepository";
 
 export default defineComponent({
     name: "RecipiesView",
-    components:{
+    components: {
         MyRecipy
     },
     data: () => ({
         dialog: false,
+        search: '',
         recipies: [] as Recipy[],
     }),
     methods: {
-        add(){
-            this.dialog = true
+        add() {
+            this.dialog = true;
+        },
+        getRecipies(){
+            return this.search == '' ? this.recipies : this.recipies.filter(e => e.name.toLowerCase().includes(this.search.toLowerCase()))
         }
     },
     mounted() {
