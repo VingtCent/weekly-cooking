@@ -8,11 +8,10 @@
                     <v-text-field v-model="recipy.url" label="Lien" type="text"></v-text-field>
                     <v-spacer></v-spacer>
                     Ingrédients:
-                    <v-list >
-                        <v-list-item v-for="ingredient in recipy.ingredients" >
-                            <v-text-field v-model="ingredient.name" label="Nom" type="text" ></v-text-field> 
-                            <v-text-field v-model="ingredient.quantity" label="Quantité" type="number"></v-text-field> 
-                            <v-text-field v-model="ingredient.unit" label="Unité" type="text"></v-text-field>
+                    <v-list>
+                        <v-list-item v-for="(ingredient, index) in recipy.ingredients">
+                            <v-text-field :model-value="ingredient" @update:model-value="(v: string) => recipy.ingredients[index]=v" label="Ingredient" type="text"></v-text-field>
+                            <v-btn icon="mdi-remove" @click="removeIngredient(index)" />
                         </v-list-item>
                     </v-list>
                 </v-form>
@@ -37,8 +36,7 @@
         </v-card-actions>
         <v-card-text v-show="show">
             <v-list v-if="recipy.ingredients.length > 0">
-                <v-list-item v-for="ingredient in recipy.ingredients">{{ ingredient.name }}
-                    {{ ingredient.quantity }}{{ ingredient.unit }}</v-list-item>
+                <v-list-item v-for="ingredient in recipy.ingredients">{{ ingredient }}</v-list-item>
             </v-list>
         </v-card-text>
         <v-card-actions>
@@ -52,7 +50,9 @@ import { defineComponent, type PropType } from "vue";
 import type { Recipy } from "../repositories/recipyRepository";
 
 export default defineComponent({
-    props: ["recipy"],
+    props: {
+        recipy:{type: Object as PropType<Recipy>, required: true},
+    },
     data: () => ({
         dialog: false,
         show: false
@@ -60,6 +60,9 @@ export default defineComponent({
     methods: {
         edit() {
             this.dialog = true
+        },
+        removeIngredient(index:number){
+            this.recipy.ingredients.splice(index)
         }
     }
 })

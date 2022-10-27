@@ -3,13 +3,7 @@ export interface Recipy {
     name: string,
     url?: string,
     portions: number,
-    ingredients: Ingredient[]
-}
-
-export interface Ingredient {
-    name: string,
-    quantity: number,
-    unit?: string
+    ingredients: string[]
 }
 
 interface IRecipyRepository {
@@ -22,13 +16,13 @@ class RecipyRepository implements IRecipyRepository {
         id: 1,
         name: 'Paëlla',
         portions: 4,
-        ingredients: [{ name: 'riz', quantity: 250, unit: 'g' }]
+        ingredients: ['250g riz']
     },
     {
         id: 2,
         name: 'Pizza',
         portions: 3,
-        ingredients: [{ name: 'pate pizza', quantity: 1 }]
+        ingredients: ['1 pate pizza']
     },
     {
         id: 3,
@@ -41,7 +35,7 @@ class RecipyRepository implements IRecipyRepository {
         name: 'Poireaux vinaigrettes',
         url: 'https://cuisine.voozenoo.fr/2022/10/20/poireaux-vinaigrette/?utm_source=rss&utm_medium=rss&utm_campaign=poireaux-vinaigrette',
         portions: 3,
-        ingredients: [{ name: 'Poireaux', quantity: 6 }, { name: 'Vinaigrette', quantity: 50, unit: 'ml' }]
+        ingredients: ['6 Poireaux', '50ml Vinaigrette']
     },
     {
         id: 5,
@@ -81,7 +75,7 @@ class RecipyRepository implements IRecipyRepository {
     }]
     
     /**
-     *
+     *  https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
      */
     constructor() {
         const dbOpenRequest = indexedDB.open("weekly-cooking", 2);
