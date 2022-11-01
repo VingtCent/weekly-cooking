@@ -33,7 +33,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        recipyRepository.getAll((result) => this.recipies = result);
+        recipyRepository.getAll().then(values => this.recipies = values);
     }
 })
 </script>
