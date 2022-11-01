@@ -1,7 +1,8 @@
 <template>
     <v-text-field label="Rechercher" prepend-inner-icon="mdi-magnify" v-model="search"></v-text-field>
     <v-container class="d-flex flex-row flex-wrap">
-        <MyRecipy v-for="item in getRecipies()" v-bind:recipy="item" :key="item.id"></MyRecipy>
+        <MyRecipy v-for="item in getRecipies()" v-bind:recipy="item" :key="item.id"
+        @remove="removeRecipy(item)"></MyRecipy>
     </v-container>
 </template>
 <script lang="ts">
@@ -26,6 +27,9 @@ export default defineComponent({
         },
         getRecipies(){
             return this.search == '' ? this.recipies : this.recipies.filter(e => e.name.toLowerCase().includes(this.search.toLowerCase()))
+        },
+        removeRecipy(recipy: Recipy){
+            this.recipies.splice(this.recipies.indexOf(recipy), 1)
         }
     },
     mounted() {

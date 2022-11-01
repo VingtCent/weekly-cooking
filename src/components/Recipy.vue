@@ -1,27 +1,27 @@
 <template>
 
     <v-dialog v-model="dialog">
-        <v-card min-width="250px">
-            <v-card-text>
-                <v-form>
-                    <v-text-field v-model="recipy.name" label="Nom" type="text"></v-text-field>
-                    <v-text-field v-model="recipy.url" label="Lien" type="text"></v-text-field>
-                    <v-spacer></v-spacer>
-                    Ingrédients:
-                    <v-list>
-                        <v-list-item v-for="(ingredient, index) in recipy.ingredients" v-bind:key="index">
-                            <v-text-field :model-value="ingredient"
-                                @update:model-value="(value: string) => recipy.ingredients[index] = value"
-                                label="Ingredient" type="text"></v-text-field>
-                            <v-btn icon="mdi-remove" @click="removeIngredient(index)" />
-                        </v-list-item>
-                    </v-list>
-                </v-form>
-            </v-card-text>
-        </v-card>
+        <v-sheet class="pa-2">
+            <v-form>
+                <v-text-field v-model="recipy.name" label="Nom" type="text"></v-text-field>
+                <v-text-field v-model="recipy.url" label="Lien" type="text"></v-text-field>
+                <v-spacer></v-spacer>
+                Ingrédients:
+                <v-list>
+                    <v-list-item v-for="(ingredient, index) in recipy.ingredients" v-bind:key="index">
+                        <v-text-field :model-value="ingredient"
+                            @update:model-value="(value: string) => recipy.ingredients[index] = value"
+                            label="Ingredient" type="text" append-icon="mdi-trash-can" @click:append="removeIngredient(index)"></v-text-field>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-icon icon="mdi-plus" @click="addIngredient()"></v-icon>
+                    </v-list-item>
+                </v-list>
+            </v-form>
+        </v-sheet>
     </v-dialog>
 
-    <v-card class="ma-2" min-width="250">
+    <v-card dense class="ma-2" min-width="250">
         <v-card-item>
             <v-card-title>
                 {{ recipy.name }}
@@ -37,15 +37,16 @@
             <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="show = !show"></v-btn>
         </v-card-actions>
         <v-card-text v-show="show">
-            <v-list v-if="recipy.ingredients.length > 0">
-                <v-list-item v-for="(ingredient, i) in recipy.ingredients" v-bind:key="i">
-                    {{ ingredient }}
+            <v-list dense v-if="recipy.ingredients.length > 0">
+                <v-list-item v-for="(ingredient, i) in recipy.ingredients" v-bind:key="i" v-text="ingredient">
                 </v-list-item>
             </v-list>
         </v-card-text>
         <v-card-actions>
-            <v-btn v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url" label="Link"></v-btn>
-            <v-btn icon="mdi-pencil" @click="edit()" label="Edit"></v-btn>
+            <v-icon class="ma-1" v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url" label="Link" />
+            <v-spacer></v-spacer>
+            <v-icon class="ma-1" icon="mdi-pencil" color="primary" @click="edit()" label="Edit" />
+            <v-icon class="ma-1" icon="mdi-trash-can" @click="$emit('remove')" label="Remove" />
         </v-card-actions>
     </v-card>
 </template>
@@ -57,16 +58,21 @@ export default defineComponent({
     props: {
         recipy: { type: Object as PropType<Recipy>, required: true },
     },
+    emits: ["remove"],
     data: () => ({
         dialog: false,
         show: false
     }),
     methods: {
         edit() {
-            this.dialog = true
+            this.dialog = true;
         },
         removeIngredient(index: number) {
-            this.recipy.ingredients.splice(index)
+            this.recipy.ingredients.splice(index, 1);
+        },
+        addIngredient()
+        {
+            this.recipy.ingredients.push("");
         }
     }
 })
