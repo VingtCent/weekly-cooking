@@ -73,7 +73,7 @@ class RecipyRepository implements IRecipyRepository {
         portions: 3,
         ingredients: []
     }]
-    
+
     /**
      *  https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
      */
@@ -103,7 +103,7 @@ class RecipyRepository implements IRecipyRepository {
 
     public getAll(callback: (a: Recipy[]) => void): void {
         const dbOpenRequest = indexedDB.open('weekly-cooking', 2);
-        dbOpenRequest.onsuccess = () =>{
+        dbOpenRequest.onsuccess = () => {
             const request = dbOpenRequest.result.transaction('recipies', 'readonly').objectStore('recipies').getAll();
             request.onsuccess = ev => {
                 console.log('get all succeed: ' + request.result)

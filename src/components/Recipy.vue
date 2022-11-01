@@ -9,8 +9,10 @@
                     <v-spacer></v-spacer>
                     Ingrédients:
                     <v-list>
-                        <v-list-item v-for="(ingredient, index) in recipy.ingredients">
-                            <v-text-field :model-value="ingredient" @update:model-value="(v: string) => recipy.ingredients[index]=v" label="Ingredient" type="text"></v-text-field>
+                        <v-list-item v-for="(ingredient, index) in recipy.ingredients" v-bind:key="index">
+                            <v-text-field :model-value="ingredient"
+                                @update:model-value="(value: string) => recipy.ingredients[index] = value"
+                                label="Ingredient" type="text"></v-text-field>
                             <v-btn icon="mdi-remove" @click="removeIngredient(index)" />
                         </v-list-item>
                     </v-list>
@@ -36,7 +38,9 @@
         </v-card-actions>
         <v-card-text v-show="show">
             <v-list v-if="recipy.ingredients.length > 0">
-                <v-list-item v-for="ingredient in recipy.ingredients">{{ ingredient }}</v-list-item>
+                <v-list-item v-for="(ingredient, i) in recipy.ingredients" v-bind:key="i">
+                    {{ ingredient }}
+                </v-list-item>
             </v-list>
         </v-card-text>
         <v-card-actions>
@@ -51,7 +55,7 @@ import type { Recipy } from "../repositories/recipyRepository";
 
 export default defineComponent({
     props: {
-        recipy:{type: Object as PropType<Recipy>, required: true},
+        recipy: { type: Object as PropType<Recipy>, required: true },
     },
     data: () => ({
         dialog: false,
@@ -61,7 +65,7 @@ export default defineComponent({
         edit() {
             this.dialog = true
         },
-        removeIngredient(index:number){
+        removeIngredient(index: number) {
             this.recipy.ingredients.splice(index)
         }
     }
