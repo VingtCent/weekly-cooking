@@ -1,3 +1,5 @@
+import { isProxy, toRaw } from "vue";
+
 export interface Recipy {
     id: number,
     name: string,
@@ -8,6 +10,7 @@ export interface Recipy {
 
 interface IRecipyRepository {
     getAll(): Promise<Recipy[]>;
+    save(recipy: Recipy): Promise<boolean>;
 }
 
 class RecipyRepository implements IRecipyRepository {
@@ -104,6 +107,21 @@ class RecipyRepository implements IRecipyRepository {
                 }
             };
         })
+    }
+    async save(recipy: Recipy): Promise<boolean> {
+        await this.Ready;
+        return new Promise<boolean>((resolve, reject) => {
+            const updateRequest = this.db.transaction('recipies', 'readwrite').objectStore('recipies')
+                .put(isProxy(recipy) ? toRaw(recipy) : recipy)
+            updateRequest.onsuccess = () => {
+                console.log(`Recipy ${recipy.name} has been updated`)
+                resolve(true)
+            };
+            updateRequest.onerror = () => {
+                console.log(`Error ${updateRequest.error?.message} while updating ${recipy}`)
+                reject(updateRequest.error?.message);
+            }
+        });
     }
 
     public async getAll(): Promise<Recipy[]> {

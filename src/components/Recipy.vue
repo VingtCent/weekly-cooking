@@ -53,16 +53,24 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue";
 import type { Recipy } from "../repositories/recipyRepository";
+import recipyRepository from "../repositories/recipyRepository";
 
 export default defineComponent({
     props: {
         recipy: { type: Object as PropType<Recipy>, required: true },
     },
-    emits: ["remove"],
+    emits: ["remove", "update"],
     data: () => ({
         dialog: false,
         show: false
     }),
+    watch:{
+        dialog(newValue, oldValue) {
+            if(this != undefined && !newValue){
+                recipyRepository.save(this.recipy);
+            }
+        }
+    },
     methods: {
         edit() {
             this.dialog = true;
