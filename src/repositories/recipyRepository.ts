@@ -133,6 +133,7 @@ class RecipyRepository implements IRecipyRepository {
                 .put(isProxy(recipy) ? toRaw(recipy) : recipy);
             updateRequest.onsuccess = () => {
                 console.log(`Recipy ${recipy.name} has been updated`);
+                recipy.id = +updateRequest.result;
                 resolve(true);
             };
             updateRequest.onerror = () => {

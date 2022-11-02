@@ -33,7 +33,7 @@ export default defineComponent({
             recipyRepository.remove(recipy);
             this.recipies.splice(this.recipies.indexOf(recipy), 1);
         },
-        addRecipy() {
+        addRecipy() {            
             this.recipies.unshift({
                 name: '',
                 portions: 4,

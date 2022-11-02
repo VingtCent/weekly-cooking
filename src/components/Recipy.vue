@@ -5,13 +5,16 @@
             <v-form>
                 <v-text-field v-model="recipy.name" label="Nom" type="text"></v-text-field>
                 <v-text-field v-model="recipy.url" label="Lien" type="text"></v-text-field>
+                <v-text-field name="portions" label="Portions" id="portions" v-model="recipy.portions" type="number">
+                </v-text-field>
                 <v-spacer></v-spacer>
                 Ingrédients:
                 <v-list>
                     <v-list-item v-for="(ingredient, index) in recipy.ingredients" v-bind:key="index">
                         <v-text-field :model-value="ingredient"
                             @update:model-value="(value: string) => recipy.ingredients[index] = value"
-                            label="Ingredient" type="text" append-icon="mdi-trash-can" @click:append="removeIngredient(index)"></v-text-field>
+                            label="Ingredient" type="text" append-icon="mdi-trash-can"
+                            @click:append="removeIngredient(index)"></v-text-field>
                     </v-list-item>
                     <v-list-item>
                         <v-icon icon="mdi-plus" @click="addIngredient()"></v-icon>
@@ -26,6 +29,9 @@
             <v-card-title>
                 {{ recipy.name }}
             </v-card-title>
+            <v-card-subtitle>
+                {{ recipy.portions }} portion(s)
+            </v-card-subtitle>
         </v-card-item>
         <v-card-actions>
             <v-btn color="secondary" variant="text">
@@ -64,10 +70,15 @@ export default defineComponent({
         dialog: false,
         show: false
     }),
-    watch:{
+    watch: {
         dialog(newValue, oldValue) {
-            if(this != undefined && !newValue){
-                recipyRepository.save(this.recipy);
+            if (this != undefined && !newValue) {
+                if (this.recipy.name != '') {
+                    recipyRepository.save(this.recipy);
+                }
+                else {
+                    this.$emit('remove');
+                }
             }
         }
     },
@@ -81,8 +92,7 @@ export default defineComponent({
         removeIngredient(index: number) {
             this.recipy.ingredients.splice(index, 1);
         },
-        addIngredient()
-        {
+        addIngredient() {
             this.recipy.ingredients.push("");
         }
     }
