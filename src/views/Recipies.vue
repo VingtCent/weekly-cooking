@@ -22,19 +22,16 @@ export default defineComponent({
         MyRecipy
     },
     data: () => ({
-        dialog: false,
         search: '',
         recipies: [] as Recipy[],
     }),
     methods: {
-        add() {
-            this.dialog = true;
-        },
         getRecipies() {
             return this.search == '' ? this.recipies : this.recipies.filter(e => e.name.toLowerCase().includes(this.search.toLowerCase()))
         },
         removeRecipy(recipy: Recipy) {
-            this.recipies.splice(this.recipies.indexOf(recipy), 1)
+            recipyRepository.remove(recipy);
+            this.recipies.splice(this.recipies.indexOf(recipy), 1);
         },
         addRecipy() {
             this.recipies.unshift({

@@ -11,6 +11,7 @@ export interface Recipy {
 interface IRecipyRepository {
     getAll(): Promise<Recipy[]>;
     save(recipy: Recipy): Promise<boolean>;
+    remove(recipy: Recipy): Promise<boolean>;
 }
 
 class RecipyRepository implements IRecipyRepository {
@@ -108,17 +109,34 @@ class RecipyRepository implements IRecipyRepository {
             };
         })
     }
+    
+    async remove(recipy: Recipy): Promise<boolean> {
+        await this.Ready;
+        return new Promise<boolean>((resolve, reject) =>{
+            const deleteRequest = this.db.transaction('recipies', 'readwrite').objectStore('recipies')
+                .delete(recipy.id!);
+            deleteRequest.onsuccess = () =>{
+                console.log(`Recipy ${recipy.name} has been deleted`);
+                resolve(true);
+            }
+            deleteRequest.onerror = () => {
+                console.log(`Error ${deleteRequest.error?.message} while deleting ${recipy}`);
+                reject(deleteRequest.error?.message);
+            }
+        })
+    }
+
     async save(recipy: Recipy): Promise<boolean> {
         await this.Ready;
         return new Promise<boolean>((resolve, reject) => {
             const updateRequest = this.db.transaction('recipies', 'readwrite').objectStore('recipies')
-                .put(isProxy(recipy) ? toRaw(recipy) : recipy)
+                .put(isProxy(recipy) ? toRaw(recipy) : recipy);
             updateRequest.onsuccess = () => {
-                console.log(`Recipy ${recipy.name} has been updated`)
-                resolve(true)
+                console.log(`Recipy ${recipy.name} has been updated`);
+                resolve(true);
             };
             updateRequest.onerror = () => {
-                console.log(`Error ${updateRequest.error?.message} while updating ${recipy}`)
+                console.log(`Error ${updateRequest.error?.message} while updating ${recipy}`);
                 reject(updateRequest.error?.message);
             }
         });
