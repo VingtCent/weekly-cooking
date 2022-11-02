@@ -9,7 +9,7 @@ pipeline {
         stage('Deploy container') {
             when { branch 'master'}
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     sh 'docker container stop weekly-cooking'
                 }
                 sh 'docker run -p 42000:80 -d --rm --name weekly-cooking weekly-cooking'
