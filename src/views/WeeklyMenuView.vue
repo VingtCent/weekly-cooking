@@ -6,7 +6,7 @@
         </v-card-item>
         <v-card-text class="py-0">
             <v-autocomplete v-model="recipy" :items="recipies" item-title="name" item-value="id" hide-details>
-            </v-autocomplete>            
+            </v-autocomplete>
         </v-card-text>
         <v-card-actions>
             <v-text-field label="Portions" type="number" v-model="portions"></v-text-field>
@@ -14,7 +14,7 @@
         </v-card-actions>
     </v-card>
     <v-list :items="weekMenu.recipies">
-        <v-list-item v-for="recipy in weekMenu.recipies">{{recipy.recipyName}} {{recipy.portions}}</v-list-item>
+        <v-list-item v-for="recipy in weekMenu.recipies">{{ recipy.recipyName }} {{ recipy.portions }}</v-list-item>
     </v-list>
 </template>
 
@@ -33,8 +33,8 @@ export default defineComponent({
         recipies: [] as Recipy[],
         weekMenu: {} as WeekMenu
     }),
-    watch:{
-        recipy(newValue, oldValue){
+    watch: {
+        recipy(newValue, oldValue) {
             this.portions = this.recipies.find(p => p.id == +newValue)?.portions
         }
     },
@@ -42,14 +42,15 @@ export default defineComponent({
         add() {
             var addedRecipy = this.recipies.filter(r => r.id == +this.recipy)[0];
             this.weekMenu.recipies.push({
-                recipyId: addedRecipy.id,
+                recipyId: addedRecipy.id!,
                 recipyName: addedRecipy.name,
                 portions: addedRecipy.portions
             });
         }
     },
     mounted() {
-        this.recipies = recipyRepository.get();
+        recipyRepository.getAll()
+            .then(values => this.recipies = values);
         this.weekMenu = weekMenuRepository.get();
     }
 })
