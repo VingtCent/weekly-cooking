@@ -49,6 +49,8 @@
             </v-list>
         </v-card-text>
         <v-card-actions>
+            <v-icon v-if="!isInMenu" class="ma-1" color="primary" label="Add to curent menu" @click="addToMenu()">mdi-book-plus</v-icon>
+            <v-icon v-if="isInMenu" class="ma-1" color="primary" label="Remove from curent menu" @click="removeFromMenu()">mdi-book-minus</v-icon>
             <v-icon class="ma-1" v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url" label="Link" />
             <v-spacer></v-spacer>
             <v-icon class="ma-1" icon="mdi-pencil" color="primary" @click="edit()" label="Edit" />
@@ -57,6 +59,8 @@
     </v-card>
 </template>
 <script lang="ts">
+import type { WeekMenu } from "@/repositories/weekMenuRepository";
+import weekMenuRepository from "@/repositories/weekMenuRepository";
 import { defineComponent, type PropType } from "vue";
 import type { Recipy } from "../repositories/recipyRepository";
 import recipyRepository from "../repositories/recipyRepository";
@@ -68,8 +72,17 @@ export default defineComponent({
     emits: ["remove", "update"],
     data: () => ({
         dialog: false,
-        show: false
+        show: false,
+        menu: {} as WeekMenu
     }),
+    computed: {
+        isInMenu(): boolean {
+            if (this.menu?.recipies != undefined) {
+                return this.menu.recipies.some(r => r.recipyId == this.recipy.id);
+            }
+            return false
+        }
+    },
     watch: {
         dialog(newValue, oldValue) {
             if (this != undefined && !newValue) {
@@ -84,6 +97,7 @@ export default defineComponent({
     },
     mounted() {
         this.dialog = this.recipy.id == undefined;
+        this.menu = weekMenuRepository.get();
     },
     methods: {
         edit() {
@@ -94,6 +108,20 @@ export default defineComponent({
         },
         addIngredient() {
             this.recipy.ingredients.push("");
+        },
+        addToMenu() {
+            this.menu.recipies.push({
+                recipyId: this.recipy.id!,
+                recipyName: this.recipy.name,
+                portions: this.recipy.portions
+            });
+        },
+        removeFromMenu(){
+            this.menu.recipies.splice(this.menu.recipies.indexOf({
+                recipyId: this.recipy.id!,
+                recipyName: this.recipy.name,
+                portions: this.recipy.portions
+            }));
         }
     }
 })
