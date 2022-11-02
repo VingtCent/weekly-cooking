@@ -71,6 +71,9 @@ export default defineComponent({
             }
         }
     },
+    mounted() {
+        this.dialog = this.recipy.id == undefined;
+    },
     methods: {
         edit() {
             this.dialog = true;

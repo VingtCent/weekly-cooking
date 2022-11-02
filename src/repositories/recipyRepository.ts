@@ -1,7 +1,7 @@
 import { isProxy, toRaw } from "vue";
 
 export interface Recipy {
-    id: number,
+    id?: number,
     name: string,
     url?: string,
     portions: number,
@@ -98,7 +98,7 @@ class RecipyRepository implements IRecipyRepository {
             dbOpenRequest.onupgradeneeded = () => {
                 console.log("New database");
                 const db = dbOpenRequest.result;
-                const objectStore = db.createObjectStore('recipies', { keyPath: "id" });
+                const objectStore = db.createObjectStore('recipies', { keyPath: "id", autoIncrement: true });
                 objectStore.createIndex('by_name', 'name', { unique: false })
                 objectStore.transaction.oncomplete = () => {
                     console.log("Fill database");
