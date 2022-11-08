@@ -1,27 +1,30 @@
 <template>
 
     <v-dialog v-model="dialog">
-        <v-sheet class="pa-2">
-            <v-form>
-                <v-text-field v-model="recipy.name" label="Nom" type="text"></v-text-field>
-                <v-text-field v-model="recipy.url" label="Lien" type="text"></v-text-field>
-                <v-text-field name="portions" label="Portions" id="portions" v-model="recipy.portions" type="number">
-                </v-text-field>
-                <v-spacer></v-spacer>
-                Ingrédients:
-                <v-list>
-                    <v-list-item v-for="(ingredient, index) in recipy.ingredients" v-bind:key="index">
-                        <v-text-field :model-value="ingredient"
-                            @update:model-value="(value: string) => recipy.ingredients[index] = value"
-                            label="Ingredient" type="text" append-icon="mdi-trash-can"
-                            @click:append="removeIngredient(index)"></v-text-field>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-icon icon="mdi-plus" @click="addIngredient()"></v-icon>
-                    </v-list-item>
-                </v-list>
-            </v-form>
-        </v-sheet>
+        <v-row justify="center">
+            <v-card class="pa-2 align-self-enter" min-width="400px">
+                <v-form>
+                    <v-text-field v-model="recipy.name" label="Nom" type="text"></v-text-field>
+                    <v-text-field v-model="recipy.url" label="Lien" type="text"></v-text-field>
+                    <v-text-field name="portions" label="Portions" id="portions" v-model="recipy.portions"
+                        type="number">
+                    </v-text-field>
+                    <v-spacer></v-spacer>
+                    Ingrédients:
+                    <v-list>
+                        <v-list-item v-for="(ingredient, index) in recipy.ingredients" v-bind:key="index">
+                            <v-text-field :model-value="ingredient"
+                                @update:model-value="(value: string) => recipy.ingredients[index] = value"
+                                label="Ingredient" type="text" append-icon="mdi-trash-can"
+                                @click:append="removeIngredient(index)"></v-text-field>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-icon icon="mdi-plus" @click="addIngredient()"></v-icon>
+                        </v-list-item>
+                    </v-list>
+                </v-form>
+            </v-card>
+        </v-row>
     </v-dialog>
 
     <v-card dense class="ma-2" min-width="250">
@@ -35,12 +38,13 @@
         </v-card-item>
         <v-card-actions>
             <v-btn color="secondary" variant="text">
-                Ingrédients
+                Ingrédients({{ recipy.ingredients.length }})
             </v-btn>
 
             <v-spacer></v-spacer>
 
-            <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="show = !show"></v-btn>
+            <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                @click="show = !show"></v-btn>
         </v-card-actions>
         <v-card-text v-show="show">
             <v-list dense v-if="recipy.ingredients.length > 0">
@@ -49,12 +53,14 @@
             </v-list>
         </v-card-text>
         <v-card-actions>
-            <v-icon v-if="!isInMenu" class="ma-1" color="primary" label="Add to curent menu" @click="addToMenu()">mdi-book-plus</v-icon>
-            <v-icon v-if="isInMenu" class="ma-1" color="primary" label="Remove from curent menu" @click="removeFromMenu()">mdi-book-minus</v-icon>
+            <v-icon v-if="!isInMenu" class="ma-1" color="primary" label="Add to curent menu" @click="addToMenu()">
+                mdi-book-plus</v-icon>
+            <v-icon v-if="isInMenu" class="ma-1" color="warning" label="Remove from curent menu"
+                @click="removeFromMenu()">mdi-book-minus</v-icon>
             <v-icon class="ma-1" v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url" label="Link" />
             <v-spacer></v-spacer>
             <v-icon class="ma-1" icon="mdi-pencil" color="primary" @click="edit()" label="Edit" />
-            <v-icon class="ma-1" icon="mdi-trash-can" @click="$emit('remove')" label="Remove" />
+            <v-icon class="ma-1" icon="mdi-trash-can" color="warning" @click="$emit('remove')" label="Remove" />
         </v-card-actions>
     </v-card>
 </template>
@@ -116,7 +122,7 @@ export default defineComponent({
                 portions: this.recipy.portions
             });
         },
-        removeFromMenu(){
+        removeFromMenu() {
             this.menu.recipies.splice(this.menu.recipies.indexOf({
                 recipyId: this.recipy.id!,
                 recipyName: this.recipy.name,
