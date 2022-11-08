@@ -12,7 +12,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                     sh 'docker container stop weekly-cooking'
                 }
-                sh 'docker run -p 42000:80 -d --rm --name weekly-cooking weekly-cooking'
+                sh 'docker run -p 42000:443 -v /etc/ssl/private/:/etc/ssl/ -d --rm --name weekly-cooking weekly-cooking'
             }
         }
     }
