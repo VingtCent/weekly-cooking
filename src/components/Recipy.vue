@@ -103,7 +103,7 @@ export default defineComponent({
     },
     mounted() {
         this.dialog = this.recipy.id == undefined;
-        this.menu = weekMenuRepository.get();
+        this.menu = weekMenuRepository.getCurrent();
     },
     methods: {
         edit() {
