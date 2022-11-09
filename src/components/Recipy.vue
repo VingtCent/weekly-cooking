@@ -53,20 +53,20 @@
             </v-list>
         </v-card-text>
         <v-card-actions>
-            <v-icon v-if="!isInMenu" class="ma-1" color="primary" label="Add to curent menu" @click="addToMenu()">
+            <v-icon v-if="!isInMenu" class="ma-1" color="primary" label="Ajouter au menu courant" @click="addToMenu()">
                 mdi-book-plus</v-icon>
-            <v-icon v-if="isInMenu" class="ma-1" color="warning" label="Remove from curent menu"
+            <v-icon v-if="isInMenu" class="ma-1" color="warning" label="Supprimer du menu courant"
                 @click="removeFromMenu()">mdi-book-minus</v-icon>
-            <v-icon class="ma-1" v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url" label="Link" />
+            <v-icon class="ma-1" v-if="recipy.url != null" icon="mdi-earth" :href="recipy.url" label="Lien vers la recette" />
             <v-spacer></v-spacer>
-            <v-icon class="ma-1" icon="mdi-pencil" color="primary" @click="edit()" label="Edit" />
-            <v-icon class="ma-1" icon="mdi-trash-can" color="warning" @click="$emit('remove')" label="Remove" />
+            <v-icon class="ma-1" icon="mdi-pencil" color="primary" @click="edit()" label="Modifier la recette" />
+            <v-icon class="ma-1" icon="mdi-trash-can" color="warning" @click="$emit('remove')" label="Supprimer la recette" />
         </v-card-actions>
     </v-card>
 </template>
 <script lang="ts">
-import type { WeekMenu } from "@/repositories/weekMenuRepository";
-import weekMenuRepository from "@/repositories/weekMenuRepository";
+import type { Menu } from "@/repositories/menuRepository";
+import weekMenuRepository from "@/repositories/menuRepository";
 import { defineComponent, type PropType } from "vue";
 import type { Recipy } from "../repositories/recipyRepository";
 import recipyRepository from "../repositories/recipyRepository";
@@ -79,7 +79,7 @@ export default defineComponent({
     data: () => ({
         dialog: false,
         show: false,
-        menu: {} as WeekMenu
+        menu: {} as Menu
     }),
     computed: {
         isInMenu(): boolean {
@@ -118,16 +118,11 @@ export default defineComponent({
         addToMenu() {
             this.menu.recipies.push({
                 recipyId: this.recipy.id!,
-                recipyName: this.recipy.name,
                 portions: this.recipy.portions
             });
         },
         removeFromMenu() {
-            this.menu.recipies.splice(this.menu.recipies.indexOf({
-                recipyId: this.recipy.id!,
-                recipyName: this.recipy.name,
-                portions: this.recipy.portions
-            }));
+            this.menu.recipies.splice(this.menu.recipies.findIndex(value => value.recipyId == this.recipy.id), 1);
         }
     }
 })
