@@ -19,14 +19,13 @@
 
                 <v-row v-for="recipy, index in currentMenu.recipies">
                     <v-col cols="7">
-                        <v-autocomplete v-model="recipy.recipyId"
-                            :items="recipies"
-                            item-title="name" item-value="id" density="compact" hide-details>
+                        <v-autocomplete v-model="recipy.recipyId" :items="recipies" item-title="name" item-value="id"
+                            density="compact" hide-details>
                         </v-autocomplete>
                     </v-col>
                     <v-col cols="4">
                         <v-text-field name="portions" label="portions" density="compact" type="number"
-                            :model-value="recipy.portions"></v-text-field>
+                            v-model="recipy.portions"></v-text-field>
                     </v-col>
                     <v-col cols="1">
                         <v-icon class="ma-1" icon="mdi-trash-can" color="warning" label="Retirer la recette du menu"
@@ -75,16 +74,26 @@ export default defineComponent({
         open(menu: Menu) {
             this.currentMenu = menu;
         },
-        add() {
-            this.currentMenu = menuRepository.create();
+        async add() {
+            this.currentMenu = {
+                name: '',
+                recipies: []
+            };
             this.menus.unshift(this.currentMenu);
         }
     },
+    watch: {
+        currentMenu: {
+            handler(newValue: Menu, oldValue: Menu) {
+                menuRepository.save(newValue)
+            },
+            deep: true
+        }
+    },
     mounted() {
-        recipyRepository.getAll()
-            .then(values => this.recipies = values);
-        this.currentMenu = menuRepository.getCurrent();
-        this.menus = menuRepository.getAll();
+        recipyRepository.getAll().then(values => this.recipies = values);
+        menuRepository.getCurrent().then(m => this.currentMenu = m);
+        menuRepository.getAll().then(l => this.menus = l);
     }
 })
 </script>

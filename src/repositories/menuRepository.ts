@@ -1,5 +1,8 @@
+import { isProxy, toRaw } from "vue";
+import weeklyCookingIndexedDb from "./indexedDb";
+
 export interface Menu {
-    id: number,
+    id?: number,
     name: string,
     date?: Date,
     recipies: MenuRecipy[]
@@ -11,38 +14,50 @@ export interface MenuRecipy {
 }
 
 interface IMenuRepository {
-    getCurrent(): Menu;
-    getAll(): Menu[];
-    create(): Menu;
+    getCurrent(): Promise<Menu>;
+    getAll(): Promise<Menu[]>;
+    save(menu: Menu): Promise<boolean>;
 }
 class MenuRepository implements IMenuRepository {
-    menus: Menu[] = [{
-        id: 1,
-        name: '2022-11-14',
-        date: new Date(2022, 11, 14),
-        recipies: [{
-            recipyId: 1,
-            portions: 2
-        }]
-    }];
-    public getCurrent(): Menu {
-        return this.menus[0];
+
+    public async getCurrent(): Promise<Menu> {
+        var menus = await this.getAll()
+        return menus[0];
     }
 
-    public getAll(): Menu[] {
-        return this.menus;
+    public async getAll(): Promise<Menu[]> {
+        var db = await weeklyCookingIndexedDb.getDb();
+        return new Promise<Menu[]>((resolve, reject) => {
+            const request = db.transaction('menus', 'readonly').objectStore('menus').getAll();
+            request.onsuccess = () => {
+                console.log('get all succeed: ' + request.result)
+                resolve(request.result);
+            }
+            request.onerror = ev => {
+                console.log(request.error?.message);
+                reject(request.error?.message);
+            }
+        });
     }
 
-    public create(): Menu {
-        var newMenu: Menu = {
-            id: this.menus.length + 1,
-            name: '',
-            recipies: []
-        };
-        return newMenu;
+    public async save(menu: Menu): Promise<boolean> {
+        var db = await weeklyCookingIndexedDb.getDb();
+        return new Promise<boolean>((resolve, reject) => {
+            const updateRequest = db.transaction('menus', 'readwrite').objectStore('menus')
+                .put(isProxy(menu) ? toRaw(menu) : menu);
+            updateRequest.onsuccess = () => {
+                console.log(`Menu ${menu.name} has been updated`);
+                menu.id = +updateRequest.result;
+                resolve(true);
+            };
+            updateRequest.onerror = () => {
+                console.log(`Error ${updateRequest.error?.message} while updating ${menu}`);
+                reject(updateRequest.error?.message);
+            }
+        });
     }
 }
 
-const menuRepository = new MenuRepository();
+const menuRepository: IMenuRepository = new MenuRepository();
 
 export default menuRepository;
