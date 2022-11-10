@@ -6,7 +6,9 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <!-- -->
+      <v-btn flat icon color="primary" disabled>
+        <v-icon>mdi-book</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-main>

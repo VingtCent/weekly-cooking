@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/TodoVue.vue')
+      component: () => import('../views/WorkInProgress.vue')
     },
     {
       path: '/recipies',
@@ -22,7 +22,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/WeeklyMenuView.vue')
+      component: () => import('../views/Menus.vue')
     },
     {
       path: '/shopping-list',
@@ -30,7 +30,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/TodoVue.vue')
+      component: () => import('../views/WorkInProgress.vue')
     }
   ]
 })

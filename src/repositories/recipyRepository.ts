@@ -1,4 +1,5 @@
 import { isProxy, toRaw } from "vue";
+import weeklyCookingIndexedDb from "./indexedDb";
 
 export interface Recipy {
     id?: number,
@@ -16,106 +17,12 @@ interface IRecipyRepository {
 
 class RecipyRepository implements IRecipyRepository {
 
-    recipies: Recipy[] = [{
-        id: 1,
-        name: 'Paëlla',
-        portions: 4,
-        ingredients: ['250g riz']
-    },
-    {
-        id: 2,
-        name: 'Pizza',
-        portions: 3,
-        ingredients: ['1 pate pizza']
-    },
-    {
-        id: 3,
-        name: 'Dahl',
-        portions: 3,
-        ingredients: []
-    },
-    {
-        id: 4,
-        name: 'Poireaux vinaigrettes',
-        url: 'https://cuisine.voozenoo.fr/2022/10/20/poireaux-vinaigrette/?utm_source=rss&utm_medium=rss&utm_campaign=poireaux-vinaigrette',
-        portions: 3,
-        ingredients: ['6 Poireaux', '50ml Vinaigrette']
-    },
-    {
-        id: 5,
-        name: 'Roti boeuf',
-        portions: 3,
-        ingredients: []
-    },
-    {
-        id: 6,
-        name: 'Pancakes',
-        portions: 3,
-        ingredients: []
-    },
-    {
-        id: 7,
-        name: 'Galettes',
-        portions: 3,
-        ingredients: []
-    },
-    {
-        id: 8,
-        name: 'Pates aux betteraves',
-        portions: 3,
-        ingredients: []
-    },
-    {
-        id: 9,
-        name: 'Oeufs bacon',
-        portions: 3,
-        ingredients: []
-    },
-    {
-        id: 10,
-        name: 'Rougail',
-        portions: 3,
-        ingredients: []
-    }]
-
-    public Ready: Promise<any>;
-    db!: IDBDatabase;
-
-    /**
-     *  https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
-     */
-    constructor() {
-        this.Ready = new Promise((resolve, reject) => {
-            const dbOpenRequest = indexedDB.open("weekly-cooking", 2);
-            dbOpenRequest.onsuccess = () => {
-                console.log("Local database opened");
-                this.db = dbOpenRequest.result;
-                resolve(undefined);
-            };
-            dbOpenRequest.onerror = () => {
-                console.log("failure while opening database: " + dbOpenRequest.error?.message);
-                reject(dbOpenRequest.error?.message);
-            };
-            dbOpenRequest.onupgradeneeded = () => {
-                console.log("New database");
-                const db = dbOpenRequest.result;
-                const objectStore = db.createObjectStore('recipies', { keyPath: "id", autoIncrement: true });
-                objectStore.createIndex('by_name', 'name', { unique: false })
-                objectStore.transaction.oncomplete = () => {
-                    console.log("Fill database");
-                    const recipiesObjectStore = db.transaction('recipies', 'readwrite').objectStore('recipies');
-                    this.recipies.forEach(r => recipiesObjectStore?.add(r))
-                }
-            };
-        })
-    }
-    
     async remove(recipy: Recipy): Promise<boolean> {
-        await this.Ready;
-        return new Promise<boolean>((resolve, reject) =>{
-            const deleteRequest = this.db.transaction('recipies', 'readwrite').objectStore('recipies')
+        var db = await weeklyCookingIndexedDb.getDb();
+        return new Promise<boolean>((resolve, reject) => {
+            const deleteRequest = db.transaction('recipies', 'readwrite').objectStore('recipies')
                 .delete(recipy.id!);
-            deleteRequest.onsuccess = () =>{
+            deleteRequest.onsuccess = () => {
                 console.log(`Recipy ${recipy.name} has been deleted`);
                 resolve(true);
             }
@@ -127,9 +34,9 @@ class RecipyRepository implements IRecipyRepository {
     }
 
     async save(recipy: Recipy): Promise<boolean> {
-        await this.Ready;
+        var db = await weeklyCookingIndexedDb.getDb();
         return new Promise<boolean>((resolve, reject) => {
-            const updateRequest = this.db.transaction('recipies', 'readwrite').objectStore('recipies')
+            const updateRequest = db.transaction('recipies', 'readwrite').objectStore('recipies')
                 .put(isProxy(recipy) ? toRaw(recipy) : recipy);
             updateRequest.onsuccess = () => {
                 console.log(`Recipy ${recipy.name} has been updated`);
@@ -144,9 +51,9 @@ class RecipyRepository implements IRecipyRepository {
     }
 
     public async getAll(): Promise<Recipy[]> {
-        await this.Ready;
+        var db = await weeklyCookingIndexedDb.getDb();
         return new Promise<Recipy[]>((resolve, reject) => {
-            const request = this.db.transaction('recipies', 'readonly').objectStore('recipies').getAll();
+            const request = db.transaction('recipies', 'readonly').objectStore('recipies').getAll();
             request.onsuccess = () => {
                 console.log('get all succeed: ' + request.result)
                 resolve(request.result);
