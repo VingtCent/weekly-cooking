@@ -55,14 +55,14 @@ import { defineComponent } from "vue";
 import recipyRepository from "../repositories/recipyRepository";
 import menuRepository from "../repositories/menuRepository";
 import type { Recipy } from "../repositories/recipyRepository";
-import type { Menu } from "../repositories/menuRepository";
+import { current, type Menu } from "../repositories/menuRepository";
 
 export default defineComponent({
     name: "Menus",
     data: () => ({
         recipies: [] as Recipy[],
-        currentMenu: {} as Menu,
-        menus: [] as Menu[]
+        menus: [] as Menu[],
+        currentMenu: current
     }),
     methods: {
         addRecipies() {
@@ -72,7 +72,7 @@ export default defineComponent({
             this.currentMenu.recipies.splice(index, 1);
         },
         open(menu: Menu) {
-            this.currentMenu = menu;
+            current.value = menu;
         },
         async add() {
             this.currentMenu = {
@@ -82,18 +82,9 @@ export default defineComponent({
             this.menus.unshift(this.currentMenu);
         }
     },
-    watch: {
-        currentMenu: {
-            handler(newValue: Menu, oldValue: Menu) {
-                menuRepository.save(newValue)
-            },
-            deep: true
-        }
-    },
     mounted() {
         recipyRepository.getAll().then(values => this.recipies = values);
-        menuRepository.getCurrent().then(m => this.currentMenu = m);
-        menuRepository.getAll().then(l => this.menus = l);
+        menuRepository.getAll().then(values => this.menus = values);
     }
 })
 </script>
