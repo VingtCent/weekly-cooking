@@ -1,5 +1,6 @@
 import type { Menu } from "./menuRepository";
 import type { Recipy } from "./recipyRepository";
+import type { ShoppingList } from "./shoppingListRepository";
 
 export interface IIndexedDb {
     getDb(): Promise<IDBDatabase>;
@@ -87,6 +88,19 @@ class IndexedDb implements IIndexedDb {
         }]
     }];
 
+    shoppingLists: ShoppingList[] = [{
+        id:1,
+        items: [{
+            text: 'fromage blanc',
+            done:false
+        },
+        {
+            text: 'fruits',
+            done: true
+        }
+    ]
+    }]
+
     /**
      *  https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
      */
@@ -110,7 +124,10 @@ class IndexedDb implements IIndexedDb {
                 this.recipies.forEach(r => recipyStore.add(r))
                 
                 const menuStore = db.createObjectStore('menus', { keyPath: "id", autoIncrement: true });
-                this.menus.forEach(r => menuStore?.add(r))              
+                this.menus.forEach(r => menuStore.add(r))              
+
+                const shoppingListStore = db.createObjectStore('shoppingLists', { keyPath: "id", autoIncrement: true });
+                this.shoppingLists.forEach(r => shoppingListStore.add(r))              
             };
         })
     }

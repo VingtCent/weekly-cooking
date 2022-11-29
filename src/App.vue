@@ -1,12 +1,11 @@
 <template>
   <v-app>
-
     <v-navigation-drawer app>
       <NavigationDrawer></NavigationDrawer>
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-app-bar-title color="primary">{{ menu.name }}</v-app-bar-title>      
+      <v-app-bar-title color="primary">{{ menu.name }}</v-app-bar-title>
     </v-app-bar>
 
     <v-main>
@@ -27,6 +26,7 @@
 import { defineComponent } from 'vue';
 import NavigationDrawer from './components/NavigationDrawer.vue';
 import { current } from './repositories/menuRepository';
+import shoppingListRepository from './repositories/shoppingListRepository';
 
 export default defineComponent({
   name: "App",
@@ -34,6 +34,9 @@ export default defineComponent({
     return {
       menu: current
     };
+  },
+  mounted() {
+    shoppingListRepository.init();
   },
   components: { NavigationDrawer }
 })
