@@ -65,8 +65,7 @@
     </v-card>
 </template>
 <script lang="ts">
-import type { Menu } from "@/repositories/menuRepository";
-import weekMenuRepository from "@/repositories/menuRepository";
+import { current as currentMenu } from "@/repositories/menuRepository";
 import { defineComponent, type PropType } from "vue";
 import type { Recipy } from "../repositories/recipyRepository";
 import recipyRepository from "../repositories/recipyRepository";
@@ -79,7 +78,7 @@ export default defineComponent({
     data: () => ({
         dialog: false,
         show: false,
-        menu: {} as Menu
+        menu: currentMenu
     }),
     computed: {
         isInMenu(): boolean {
@@ -103,7 +102,6 @@ export default defineComponent({
     },
     mounted() {
         this.dialog = this.recipy.id == undefined;
-        weekMenuRepository.getCurrent().then( m => this.menu = m);
     },
     methods: {
         edit() {

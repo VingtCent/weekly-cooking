@@ -6,9 +6,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-btn flat icon color="primary" disabled>
-        <v-icon>mdi-book</v-icon>
-      </v-btn>
+      <v-app-bar-title color="primary">{{ menu.name }}</v-app-bar-title>      
     </v-app-bar>
 
     <v-main>
@@ -26,14 +24,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import NavigationDrawer from './components/NavigationDrawer.vue'
+import { defineComponent } from 'vue';
+import NavigationDrawer from './components/NavigationDrawer.vue';
+import { current } from './repositories/menuRepository';
 
 export default defineComponent({
   name: "App",
   data() {
     return {
-      //
+      menu: current
     };
   },
   components: { NavigationDrawer }
