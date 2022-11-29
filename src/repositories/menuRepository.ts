@@ -1,4 +1,4 @@
-import { isProxy, toRaw } from "vue";
+import { isProxy, toRaw, ref, watch } from "vue";
 import weeklyCookingIndexedDb from "./indexedDb";
 
 export interface Menu {
@@ -14,11 +14,18 @@ export interface MenuRecipy {
 }
 
 interface IMenuRepository {
-    getCurrent(): Promise<Menu>;
     getAll(): Promise<Menu[]>;
-    save(menu: Menu): Promise<boolean>;
 }
 class MenuRepository implements IMenuRepository {
+
+    constructor() {
+        this.getCurrent().then(m => {
+            current.value = m;
+            watch(current,
+                c => this.save(c),
+                { deep: true })
+        })
+    }
 
     public async getCurrent(): Promise<Menu> {
         var menus = await this.getAll()
@@ -61,3 +68,4 @@ class MenuRepository implements IMenuRepository {
 const menuRepository: IMenuRepository = new MenuRepository();
 
 export default menuRepository;
+export const current = ref<Menu>({} as Menu); 
